@@ -30,7 +30,8 @@
             function updateTimes(){
                 var date = new Date();
                 var time_now_string = date.toTimeString();
-                $("current_time").text(time_now_string)
+                $("#current_time").text(time_now_string)
+                console.log(time_now_string)
             }
 
             $( document ).ready(function() {

@@ -38,7 +38,7 @@
                 var date = new Date();
                 var ahead_date = add_minutes(date,adjustment_minutes);
                 var time_now_string = date.toLocaleTimeString();
-                var time_future_string = date.toLocaleTimeString();
+                var time_future_string = ahead_date.toLocaleTimeString();
                 $("#current_time").text(time_now_string)
                 $("#future_time").text(time_future_string)
                 console.log(time_now_string)
@@ -47,6 +47,7 @@
 
             $( document ).ready(function() {
                 updateTimes();
+                setInerval(updateTimes, 500);
             });
         </script>
     </body>

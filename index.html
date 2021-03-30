@@ -27,9 +27,15 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
         
         <script>
-            var date = new Date();
-            var time_now_string = date.toTimeString();
-            $("current_time").text(time_now_string)
+            function updateTimes(){
+                var date = new Date();
+                var time_now_string = date.toTimeString();
+                $("current_time").text(time_now_string)
+            }
+
+            $( document ).ready(function() {
+                updateTimes();
+            }
         </script>
     </body>
 </html>

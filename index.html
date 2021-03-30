@@ -37,7 +37,7 @@
 
             function updateTimes(){
                 var time_now = moment().format('HH:mm:ss');
-                var time_future = moment().add(adjustment_minutes, 'm').format('HH:mm');
+                var time_future = moment().add(adjustment_minutes, 'm').add(30, 'seconds').startOf('minute').format('HH:mm');
                 $("#current_time").text(time_now);
                 $("#future_time").text(time_future);
                 console.log(time_now)

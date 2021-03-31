@@ -111,22 +111,22 @@
                 }
                 if (doses == 6){
                     $("#6doses").prop("checked", true);
-                    $("#8doses").prop("checked", false);
-                    $("#11doses").prop("checked", false);
+                    $("#8doses").removeAttr("checked");
+                    $("#11doses").removeAttr("checked");
                 } else if (doses == 8){
-                    $("#6doses").prop("checked", false);
+                    $("#6doses").removeAttr("checked");
                     $("#8doses").prop("checked", true);
-                    $("#11doses").prop("checked", false);
+                    $("#11doses").removeAttr("checked");
                 } else if (doses == 11){
-                    $("#6doses").prop("checked", false);
-                    $("#8doses").prop("checked", false);
+                    $("#6doses").removeAttr("checked");
+                    $("#8doses").removeAttr("checked");
                     $("#11doses").prop("checked", true);
                 }
                 if (adjustment_minutes == 15){
                     $("#15minutes").prop("checked", true);
-                    $("#6hours").prop("checked", false);
+                    $("#6hours").removeAttr("checked");
                 } else if (adjustment_minutes == 6*60){
-                    $("#15minutes").prop("checked", false);
+                    $("#15minutes").removeAttr("checked");
                     $("#6hours").prop("checked", true);
                 }
             }

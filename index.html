@@ -10,14 +10,19 @@
         <div class="container-fluid">
             <div class="row justify-content-md-center">
                 <div class="col-md-auto">
+                    <button type="button" id="AMPM_toggle" class="btn btn-primary btn-lg btn-block">24 Hour / AM-PM</button>
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto">
                     <h4 class="text-center"> Current Time:</h4>
-                    <h2 id="current_time">Current Time</h2>
+                    <h2 id="current_time" class="text-center">Current Time</h2>
                 </div>
             </div>
             <div class="row justify-content-md-center jumbotron">
                 <div class="col-md-auto">
                     <h4 class="text-center"> +15 Minutes:</h4>
-                    <h1 id="future_time" class="display-1">Future Time</h2>
+                    <h1 id="future_time" class="display-1 text-center">Future Time</h2>
                 </div>
             </div>
         </div>
@@ -32,19 +37,37 @@
         <script>
 
             var adjustment_minutes = 15;
+            var AMPM = false;
 
             var add_minutes =  function (dt, minutes) {
                 return new Date(dt.getTime() + minutes*60000);
             }
 
+            function toggleAMPM(){
+                if (AMPM){
+                    AMPM = false;
+                } else {
+                    AMPM = true;
+                }
+            }
+
             function updateTimes(){
-                var time_now = moment().format('HH:mm:ss');
-                var time_future = moment().add(adjustment_minutes, 'm').add(30, 'seconds').startOf('minute').format('HH:mm');
+                var time_format = 'HH:mm:ss';
+                var future_time_format = 'HH:mm';
+                if (AMPM) {
+                    time_format = 'hh:mm:ss A';
+                    future_time_format = 'hh:mm A';
+                }
+                var time_now = moment().format(time_format);
+                var time_future = moment().add(adjustment_minutes, 'm').add(30, 'seconds').startOf('minute').format(future_time_format);
                 $("#current_time").text(time_now);
                 $("#future_time").text(time_future);
                 console.log(time_now)
             }
 
+            $("#AMPM_toggle").click( function(){
+                toggleAMPM();
+            });
 
             $( document ).ready(function() {
                 updateTimes();

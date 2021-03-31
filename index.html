@@ -188,7 +188,7 @@
                 saveDetails();
             });
 
-            $("input[@name='time_option']").change(function(){
+            $("input[name='time_option']").change(function(){
                 if (this.value == '6hours') {
                     adjustment_minutes = 6*60;
                 } else if (this.value == '15minutes'){
@@ -197,7 +197,7 @@
                 saveDetails();
             });
 
-            $("input[@name='dose_option']").change(function(){
+            $("input[name='dose_option']").change(function(){
                 if (this.value == '6doses') {
                     doses = 6;
                 } else if (this.value == '8doses'){

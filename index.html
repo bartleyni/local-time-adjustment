@@ -48,7 +48,6 @@
             </div>
             <div class="row justify-content-md-center jumbotron">
                 <div class="col-md-auto">
-                    <h4 class="text-center"> +15 Minutes:</h4>
                     <h1 id="future_time" class="display-1 text-center">Future Time</h2>
                 </div>
             </div>
@@ -112,14 +111,22 @@
                 }
                 if (doses == 6){
                     $("#6doses").prop("checked", true);
+                    $("#8doses").prop("checked", false);
+                    $("#11doses").prop("checked", false);
                 } else if (doses == 8){
+                    $("#6doses").prop("checked", false);
                     $("#8doses").prop("checked", true);
+                    $("#11doses").prop("checked", false);
                 } else if (doses == 11){
+                    $("#6doses").prop("checked", false);
+                    $("#8doses").prop("checked", false);
                     $("#11doses").prop("checked", true);
                 }
                 if (adjustment_minutes == 15){
                     $("#15minutes").prop("checked", true);
+                    $("#6hours").prop("checked", false);
                 } else if (adjustment_minutes == 6*60){
+                    $("#15minutes").prop("checked", false);
                     $("#6hours").prop("checked", true);
                 }
             }

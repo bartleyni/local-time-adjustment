@@ -199,12 +199,13 @@
 
             $("input[name='dose_option']").change(function(){
                 console.log("does change");
-                console.log(this.value);
-                if (this.value == '6doses') {
+                var value = $("input[name='dose_option']:checked").val()
+                console.log(value);
+                if (value == '6doses') {
                     doses = 6;
-                } else if (this.value == '8doses'){
+                } else if (value == '8doses'){
                     doses = 8;
-                } else if (this.value == '11doses'){
+                } else if (value == '11doses'){
                     doses = 11;
                 }
                 saveDetails();

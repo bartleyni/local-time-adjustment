@@ -29,10 +29,10 @@
                 <div class="col-md-auto">
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-primary">
-                        <input type="radio" name="time_option" id="15minutes" autocomplete="off" checked="" wtx-context="1587E9B6-6C62-47ED-82B8-FAEBFCE91D8E"> 15 Minutes
+                        <input type="radio" name="time_option" id="15minutes" value="15" autocomplete="off" checked="" wtx-context="1587E9B6-6C62-47ED-82B8-FAEBFCE91D8E"> 15 Minutes
                         </label>
                         <label class="btn btn-primary">
-                        <input type="radio" name="time_option" id="6hours" autocomplete="off" wtx-context="568F06A4-EE71-4A27-A780-4EABFF515079"> 6 Hours
+                        <input type="radio" name="time_option" id="6hours" value="360" autocomplete="off" wtx-context="568F06A4-EE71-4A27-A780-4EABFF515079"> 6 Hours
                         </label>
                     </div>
                 </div>
@@ -189,11 +189,8 @@
             });
 
             $("input[name='time_option']").change(function(){
-                if (this.value == '6hours') {
-                    adjustment_minutes = 6*60;
-                } else if (this.value == '15minutes'){
-                    adjustment_minutes = 15;
-                }
+                var value = $('input[name=time_option]:checked').val()
+                adjustment_minutes = value;
                 saveDetails();
             });
 
@@ -201,13 +198,7 @@
                 console.log("does change");
                 var value = $('input[name=dose_option]:checked').val()
                 console.log(value);
-                if (value == '6doses') {
-                    doses = 6;
-                } else if (value == '8doses'){
-                    doses = 8;
-                } else if (value == '11doses'){
-                    doses = 11;
-                }
+                doses = value;
                 saveDetails();
             });
 

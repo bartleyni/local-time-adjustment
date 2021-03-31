@@ -37,7 +37,7 @@
                     </div>
                 </div>
                 <div class="col-md-auto">
-                    <button type="button" id="data_resst" class="btn btn-primary btn-lg btn-block">Reset</button>
+                    <button type="button" id="data_reset" class="btn btn-primary btn-lg btn-block">Reset</button>
                 </div>
             </div>
             <div class="row justify-content-md-center">
@@ -131,20 +131,22 @@
                 }
             }
 
+            function reset(){
+                AMPM = false;
+                doses = 6;
+                adjustment_minutes = 15;
+                count = 0;
+                $("#count").html("");
+                $("#click_text").show()
+                saveDetails();
+            }
+
             function toggleAMPM(){
                 if (AMPM){
                     AMPM = false;
                 } else {
                     AMPM = true;
                 }
-            }
-
-            function timeSelect(){
-
-            }
-
-            function doseSelect(){
-                
             }
 
             function updateTimes(){
@@ -186,6 +188,10 @@
             $("#AMPM_toggle").click( function(){
                 toggleAMPM();
                 saveDetails();
+            });
+
+            $("#data_reset").click( function(){
+                reset();
             });
 
             $("#click_to_count").click( function(){  

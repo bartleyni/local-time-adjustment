@@ -77,6 +77,11 @@
                 if (count > 0){
                     $("#click_text").hide();
                     $("#number").text(count);
+                    var i = 0;
+                    while (i < count){
+                        addTally();
+                        i = i + 1;
+                    }
 
                 }
             }
@@ -140,8 +145,9 @@
 
 
             $( document ).ready(function() {
-                updateTimes();
+                
                 getDetails();
+                updateTimes();
                 setInterval(updateTimes, 500);
             });
         </script>

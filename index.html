@@ -50,9 +50,35 @@
             var adjustment_minutes = 15;
             var AMPM = false;
             var count = 0;
+            var doses = 6;
 
             var add_minutes =  function (dt, minutes) {
                 return new Date(dt.getTime() + minutes*60000);
+            }
+
+            function saveDetails(){
+                var details = {
+                    count: count,
+                    ampm: AMPM,
+                    adjustment: adjustment_minutes,
+                    doses: doses,
+                }
+
+                window.localStorage.setItem('time_counter', JSON.stringify(details));
+            }
+
+            function getDetails(){
+                var details = JSON.parse(window.localStorage.getItem('time_counter'));
+                console.log(details);
+                adjustment_minutes = details.adjustment;
+                AMPM = details.ampm;
+                count = details.count;
+                doses = details.doses;
+                if (count > 0){
+                    $("#click_text").hide();
+                    $("#number").text(count);
+
+                }
             }
 
             function toggleAMPM(){
@@ -85,22 +111,13 @@
             function addCount(){
                 count = count + 1;
                 console.log(count)
-                var six_check = count % 6;
-                var eight_check = count % 8;
-                var eleven_check = count % 11;
+                var dose_check = count % doses;
 
-                if(six_check === 0){
+                if(dose_check === 0){
                     $("#number").addClass('text-warning');
                     $("#number").removeClass('text-sucess');
                 }
-                else if(eight_check === 0){
-                    $("#number").addClass('text-warning');
-                    $("#number").removeClass('text-sucess');
-                }
-                else if (eleven_check === 0){
-                    $("#number").addClass('text-warning');
-                    $("#number").removeClass('text-sucess');
-                } else {
+                else{
                     $("#number").removeClass('text-warning');
                     $("#number").addClass('text-success');
                 }
@@ -110,18 +127,21 @@
 
             $("#AMPM_toggle").click( function(){
                 toggleAMPM();
+                saveDetails();
             });
 
-            $("#click_to_count").click( function(){
+            $("#click_to_count").click( function(){  
                 addTally();
                 addCount();
                 $("#click_text").hide();
+                saveDetails();
             });
 
 
 
             $( document ).ready(function() {
                 updateTimes();
+                getDetails();
                 setInterval(updateTimes, 500);
             });
         </script>

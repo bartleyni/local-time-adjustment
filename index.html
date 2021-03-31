@@ -26,11 +26,15 @@
                     <h1 id="future_time" class="display-1 text-center">Future Time</h2>
                 </div>
             </div>
-            <div id="click_to_count" class="row justify-content-center bg-blue flex-grow-1 h-25">
-                <div class="text-white">CLICK TO COUNT</div>
-                <div>
+            <div id="click_to_count" class="row justify-content-center flex-grow-1 h-25">
+                
+                <div id="click_text" class="text-white row justify-content-center">CLICK TO COUNT</div>
+                <div class="row justify-content-center">
                     <ol id="count">
                     </ol>
+                </div>
+                <div id= "number" class="row justify-content-center">
+
                 </div>
             </div>
         </div>
@@ -82,6 +86,7 @@
             function addCount(){
                 count = count + 1;
                 console.log(Count)
+                $("#number").text(count);
             }
 
 
@@ -92,6 +97,7 @@
             $("#click_to_count").click( function(){
                 addTally();
                 addCount();
+                $("#click_text").hide();
             });
 
 

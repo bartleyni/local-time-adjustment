@@ -199,7 +199,7 @@
 
             $("input[name='dose_option']").change(function(){
                 console.log("does change");
-                var value = $("input[name='dose_option']:checked").val()
+                var value = $('input[name="dose_option"]:checked').val()
                 console.log(value);
                 if (value == '6doses') {
                     doses = 6;

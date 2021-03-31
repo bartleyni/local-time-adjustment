@@ -198,6 +198,8 @@
             });
 
             $("input[name='dose_option']").change(function(){
+                console.log("does change");
+                console.log(this.value);
                 if (this.value == '6doses') {
                     doses = 6;
                 } else if (this.value == '8doses'){

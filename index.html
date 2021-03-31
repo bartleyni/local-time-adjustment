@@ -26,8 +26,12 @@
                     <h1 id="future_time" class="display-1 text-center">Future Time</h2>
                 </div>
             </div>
-            <div class="row justify-content-center bg-blue flex-grow-1">
+            <div id="click to count" class="row justify-content-center bg-blue flex-grow-1 h-25">
                 <div class="text-white">CLICK TO COUNT</div>
+                <div>
+                    <ol id="count">
+                    </ol>
+                </div>
             </div>
         </div>
         
@@ -42,6 +46,7 @@
 
             var adjustment_minutes = 15;
             var AMPM = false;
+            var count = 0;
 
             var add_minutes =  function (dt, minutes) {
                 return new Date(dt.getTime() + minutes*60000);
@@ -69,9 +74,26 @@
                 console.log(time_now)
             }
 
+            function addTally(){
+                $('<li />').prop('class','tally').appendTo('#count');
+                    return false;
+            }
+
+            function addCount(){
+                count = count + 1;
+            }
+
+
             $("#AMPM_toggle").click( function(){
                 toggleAMPM();
             });
+
+            $("#click_to_count").click( function(){
+                addTally();
+                addCount();
+            });
+
+
 
             $( document ).ready(function() {
                 updateTimes();

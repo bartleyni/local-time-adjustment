@@ -110,6 +110,17 @@
                     }
 
                 }
+                if (doses == 6){
+                    $("#6doses").prop("checked", true);
+                } else if (doses == 8){
+                    $("#8doses").prop("checked", true);
+                } else if (doses == 11){
+                    $("#11doses").prop("checked", true);
+                }
+                if (adjustment_minutes == 15){
+                    $("#15minutes").prop("checked", true);
+                } else if (adjustment_minutes == 6*60){
+                    $("#6hours").prop("checked", true);
             }
 
             function toggleAMPM(){
@@ -118,6 +129,14 @@
                 } else {
                     AMPM = true;
                 }
+            }
+
+            function timeSelect(){
+
+            }
+
+            function doseSelect(){
+                
             }
 
             function updateTimes(){
@@ -168,7 +187,25 @@
                 saveDetails();
             });
 
+            $("input[@name='time_option']").change(function(){
+                if (this.value == '6hours') {
+                    adjustment_minutes = 6*60;
+                } else if (this.value == '15minutes'){
+                    adjustment_minutes = 15;
+                }
+                saveDetails();
+            });
 
+            $("input[@name='dose_option']").change(function(){
+                if (this.value == '6doses') {
+                    doses = 6;
+                } else if (this.value == '8doses'){
+                    doses = 8;
+                } else if (this.value == '11doses'){
+                    doses = 11;
+                }
+                saveDetails();
+            });
 
             $( document ).ready(function() {
                 

@@ -3,7 +3,7 @@ html,body{height:100%;}
 li {
     display: inline-block;
     height: 20px;
-    border: 2px solid #000;
+    border: 2px solid #d4d9dd;
     margin: 0 2px 0 0;
 }
 

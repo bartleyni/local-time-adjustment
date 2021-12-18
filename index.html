@@ -39,6 +39,9 @@
                 <div class="col-md-auto">
                     <button type="button" id="data_reset" class="btn btn-warning btn-block">Reset</button>
                 </div>
+                <div class="col-md-auto">
+                    Name: <input type="text" class="form-control" id="name_input" placeholder="Name">
+                </div>
             </div>
             <div class="row justify-content-md-center">
                 <div class="col-md-auto">
@@ -47,8 +50,26 @@
                 </div>
             </div>
             <div class="row justify-content-md-center">
-                <div class="col-md-auto">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
                     <h1 id="future_time" class="large-clock text-center">Future Time</h2>
+                </div>
+                <div class="col-md-3">
+                    <div id="scores"></div>               
+                </div>
+            </div>
+            <div class="row justify-content-md-center">
+                <div class="col-md-auto">
+                    <h4 class="text-center">Time Since Last:</h4>
+                    <h4 id="time_since_last" class="text-center"></h2>
+                </div>
+                <div class="col-md-auto">
+                    <h4 class="text-center">Average Time Between:</h4>
+                    <h4 id="average_time_between" class="text-center"></h2>
+                </div>
+                <div class="col-md-auto">
+                    <h4 class="text-center">Rate (per hour):</h4>
+                    <h4 id="rate_per_hour" class="text-center"></h2>
                 </div>
             </div>
             <div id="click_to_count" class="row justify-content-center flex-grow-1 h-25">
@@ -69,25 +90,88 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous"></script>
-        
-        <script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.min.js" integrity="sha256-UplsBBNj5zR16Nyo1bVLLVd0ndtLYs0A5c4WrbK/etU=" crossorigin="anonymous"></script>
 
+        <script>
             var adjustment_minutes = 15;
             var AMPM = false;
             var count = 0;
             var doses = 6;
+            var time_of_first = 0;
+            var hourly_rate = 0;
+            var time_of_last = 0;
+            var time_between = 0;
+            var average_time_between = 0;
+            var clin_name = "test";
+            var times = [];
 
             var add_minutes =  function (dt, minutes) {
                 return new Date(dt.getTime() + minutes*60000);
             }
 
+            var clientId = "browserClient"+String(Math.floor((Math.random() * 1000000) + 1));
+            client = new Paho.MQTT.Client("nickbartley.co.uk", Number(8884), clientId);
+            // set callback handlers
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+            // connect the client
+            client.connect({userName:"dose", password:"dose", useSSL:true, onSuccess:onConnect, mqttVersionExplicit:false, mqttVersion:3});
+            // called when the client connects
+            function onConnect() {
+                client.subscribe("dose/score");       
+            }
+
+            // called when the client loses its connection
+            function onConnectionLost(responseObject) {
+                if (responseObject.errorCode !== 0) {
+                    console.log("onConnectionLost:"+responseObject.errorMessage);
+                }
+            }
+
+            // called when a message arrives
+            function onMessageArrived(message) {
+                console.log("Topic: "+message.destinationName);
+                console.log("onMessageArrived: "+message.payloadString);
+                if (message.destinationName === "dose/score") {
+                    var score = JSON.parse(message.payloadString);
+                    updateScores(score);
+                }
+            }
+
+            function updateScores(json) {
+                console.log(json);
+                if(json["name"] != ""){
+                    if($("#"+json["name"]).length){
+                        $("#"+json["name"]).remove();
+                    }
+                    var avg = moment.utc(json["average"]).format('mm:ss');
+                    $("#scores").append('<div id="'+json["name"]+'">('+json["name"]+') Count: '+json["count"]+' - Avg: '+avg+' - Hourly: '+json["hourly"]+'</div>');
+                }
+            }
+
+            function sendScore(){
+                var score = {"name": clin_name, "count": count, "average": average_time_between, "hourly": hourly_rate};
+                console.log("Send Score");
+                //console.log(score);
+                var json = JSON.stringify(score);
+                //console.log(json);
+                message = new Paho.MQTT.Message(json);
+                message.destinationName = "dose/score";
+                message.retained = false;
+                client.send(message);
+            }
+
             function saveDetails(){
                 var details = {
+                    name: clin_name,
                     count: count,
                     ampm: AMPM,
                     adjustment: adjustment_minutes,
                     doses: doses,
-                }
+                    time_of_first: time_of_first,
+                    time_of_last: time_of_last,
+                    hourly_rate: hourly_rate,
+                };
 
                 window.localStorage.setItem('time_counter', JSON.stringify(details));
             }
@@ -97,11 +181,19 @@
                 console.log(details);
                 adjustment_minutes = details.adjustment;
                 AMPM = details.ampm;
+                clin_name = details.name;
                 count = details.count;
                 doses = details.doses;
+                hourly_rate = hourly_rate;
+                time_of_first = new Date(details.time_of_first);
+                time_of_last = new Date(details.time_of_last);
+
+                $("#name_input").val(clin_name);
+
                 if (count > 0){
                     $("#click_text").hide();
                     $("#number").text(count);
+                    updateAverageTime();
                     var i = 0;
                     while (i < count){
                         addTally();
@@ -136,9 +228,15 @@
                 doses = 6;
                 adjustment_minutes = 15;
                 count = 0;
+                times = [];
                 $("#count").html("");
-                $("#click_text").show()
+                $("#click_text").show();
                 $("#number").text("");
+                $("#time_since_last").text("");
+                $("#average_time_between").text("");
+                $("#rate_per_hour").text("");
+                $("#name_input").val("");
+                clin_name = "";
                 saveDetails();
             }
 
@@ -148,6 +246,22 @@
                 } else {
                     AMPM = true;
                 }
+            }
+
+            function updateTimeSinceLast(){
+                var now = moment(new Date());
+                var end = moment(time_of_last);
+                var duration = moment.duration(now.diff(end));
+                //console.log(duration);
+                var time_since_last = moment.utc(duration.asMilliseconds()).format('mm:ss');
+                $("#time_since_last").text(time_since_last);
+            }
+
+            function updateAverageTime(){
+                var milli_time = time_of_last - time_of_first;
+                average_time_between = milli_time / (count-1);
+                var average_time = moment.utc(average_time_between).format('mm:ss');
+                $("#average_time_between").text(average_time);
             }
 
             function updateTimes(){
@@ -161,17 +275,26 @@
                 var time_future = moment().add(adjustment_minutes, 'm').add(30, 'seconds').startOf('minute').format(future_time_format);
                 $("#current_time").text(time_now);
                 $("#future_time").text(time_future);
+                if (count > 0){
+                    updateTimeSinceLast();
+                }
                 //console.log(time_now)
             }
 
             function addTally(){
                 $('<li />').prop('class','tally').appendTo('#count');
-                    return false;
+                return false;
             }
 
             function addCount(){
+                var now = new Date();
+                if(count === 0){
+                    time_of_first = now;
+                }
+                times.push(now);
+                console.log(times);
                 count = count + 1;
-                console.log(count)
+                console.log(count);
                 var dose_check = count % doses;
 
                 if(dose_check === 0){
@@ -183,6 +306,24 @@
                     $("#number").addClass('text-success');
                 }
                 $("#number").text(count);
+                time_of_last = now;
+                //console.log(time_of_last);
+                if(count > 1){
+                    updateAverageTime();
+                }
+                clin_name = $("#name_input").val();
+                
+            }
+
+            function filterTimes(){
+                if(times.length){
+                    var now = new Date();
+                    times = times.filter(function (e) {
+                        return e > (now - (1000*60*60));
+                    });
+                    hourly_rate = times.length;
+                    $("#rate_per_hour").text(hourly_rate);
+                }
             }
 
 
@@ -198,29 +339,30 @@
             $("#click_to_count").click( function(){  
                 addTally();
                 addCount();
+                filterTimes();
+                sendScore();
                 $("#click_text").hide();
                 saveDetails();
             });
 
             $("input[name='time_option']").change(function(){
-                var value = $('input[name=time_option]:checked').val()
+                var value = $('input[name=time_option]:checked').val();
                 adjustment_minutes = value;
                 saveDetails();
             });
 
             $("input[name='dose_option']").change(function(){
                 console.log("does change");
-                var value = $('input[name=dose_option]:checked').val()
+                var value = $('input[name=dose_option]:checked').val();
                 console.log(value);
                 doses = value;
                 saveDetails();
             });
 
             $( document ).ready(function() {
-                
                 getDetails();
                 updateTimes();
-                setInterval(updateTimes, 500);
+                setInterval(updateTimes, 300);
             });
         </script>
     </body>
